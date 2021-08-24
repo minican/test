@@ -7,7 +7,7 @@ class book(models.Model):
     author = models.CharField(max_length=255)
     press = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
-    translator = models.CharField(max_length=255)
+    translator = models.CharField(max_length=255,blank=True)
     publication_year = models.DateField()
     page_num = models.IntegerField()
     price = models.FloatField()

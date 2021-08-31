@@ -66,7 +66,8 @@ def get_all_detail_books(book_list):
 
 
 def insert_into_db(list):
-    
+    #TODO
+    return True 
 
 
 def test():

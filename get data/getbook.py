@@ -38,17 +38,51 @@ def get_top10_book_of_each_tag(list):
 def get_all_detail_books(book_list):
 
     book_json_list=[]
+    
     for  book in book_list:
+        book_info = {}
         main_soup = get_response_html(book)
         book_cover_img = main_soup.select('a[class="nbg"]')
         
         item_key_list = BeautifulSoup(str(main_soup.select('div[id="info"]')),'lxml').text
-        #item_vlaue_list = BeautifulSoup(str(main_soup.select('div[id="info"]')),'lxml').find_all('a')
-        #for item in item_list 
+        a = re.compile(r'&nbsp|\xa0|\\xa0|\u3000|\\u3000|\\u0020|\u0020|\r')
+        item_key_list = a.sub('', item_key_list).replace('\n','',4).replace('[','').replace(']','').replace(r'元','')
+                                                #删除前面多少个换行符  
         print(item_key_list)
-        #print(item_vlaue_list)
+        print('_'*40)
+        for  item in re.split('\n',item_key_list):
+            if item !='':
+                print(item)
+                print('_'*40)
+                book_info[item[0:item.index(':')]] = item[item.index(':')+1:]
+            else:
+                break     
+        book_json_list.append(book_info)
+    print(book_json_list)
+    
     return book_json_list 
 
+
+
+
+def insert_into_db(list):
+    
+
+
+def test():
+     str1 = '作者:林奕含\n出版社:北京联合出版公司\n出品方:磨铁图书\n出版年:2018-2\n页数:272\n定价:45.00\n装帧:平装\nISBN:9787559614636'
+     book={}
+     for item in re.split('\n',str1):
+        
+        key1 = item[0:item.index(':')]
+        value1 = item[item.index(':')+1:] 
+        #print(key1)
+        #print(value1)
+        book[key1] =value1
+
+     print(book)
+     #print(str1)
+    
 if __name__ == '__main__':
     ## 根地址  https://book.douban.com/tag/?view=type&icn=index-sorttags-all
     ## 然后获取每个tag 的链接 ，新链接中获取到第一页中的数据，然后依次进入页面 获取图书信息
@@ -69,6 +103,10 @@ if __name__ == '__main__':
     # #print(total_tags_url)      
     # detail_book_url_list = get_top10_book_of_each_tag(total_tags_url)
 
+    #test()
+    detail_book_url_list=['http://book.douban.com/subject/27614904/']
 
-    detail_book_url_list=['https://book.douban.com/subject/27614904/']
+    ##detail_book_url_list =['https://book.douban.com/subject/4913064/']
     all_books=get_all_detail_books(detail_book_url_list)
+
+    insert_into_db(all_books)    
